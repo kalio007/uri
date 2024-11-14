@@ -1,6 +1,6 @@
-![Frontend](assets/frontend.png)
-
 # Job Application Dashboard
+
+![Frontend](assets/frontend.png)
 
 This project is a full-stack Job Application Dashboard with a frontend built using Next.js and a backend using Nest.js. The frontend displays job application data with analytics using a chart, and the backend provides APIs to manage and retrieve job application data.
 
