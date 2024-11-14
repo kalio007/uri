@@ -11,12 +11,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { fetchAllApplications } from "@/services/job-application";
 import { JobApplication } from "@/types/application";
 
 export default function ApplicationTable() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   useEffect(() => {
     const loadApplications = async () => {
@@ -33,42 +48,126 @@ export default function ApplicationTable() {
     loadApplications();
   }, []);
 
+  const columns: ColumnDef<JobApplication>[] = [
+    {
+      accessorKey: "jobTitle",
+      header: "Job Title",
+    },
+    {
+      accessorKey: "companyName",
+      header: "Company Name",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "dateApplied",
+      header: () => <div className="text-right">Date Applied</div>,
+      cell: ({ row }) => (
+        <div className="text-right">{row.getValue("dateApplied")}</div>
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data: applications,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    state: {
+      sorting,
+      columnFilters,
+    },
+  });
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Table>
-      <TableCaption>A list of your recent job applications.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[150px]">Job Title</TableHead>
-          <TableHead>Company Name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Date Applied</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {applications.map((application) => (
-          <TableRow key={application.id}>
-            <TableCell className="font-medium">
-              {application.jobTitle}
-            </TableCell>
-            <TableCell>{application.companyName}</TableCell>
-            <TableCell>{application.status}</TableCell>
-            <TableCell className="text-right">
-              {application.dateApplied}
+    <div className="w-full">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter by job title..."
+          value={(table.getColumn("jobTitle")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("jobTitle")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+      </div>
+      <Table>
+        <TableCaption>A list of your recent job applications.</TableCaption>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={columns.length}>
+              Showing {table.getFilteredRowModel().rows.length} job application
+              {table.getFilteredRowModel().rows.length === 1 ? "" : "s"}
             </TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={4}>
-            Showing {applications.length} job applications
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableFooter>
+      </Table>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 }
