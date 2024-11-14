@@ -40,3 +40,5 @@ To start the project, follow these steps:
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
 - **Backend API**: [http://localhost:3001](http://localhost:3001)
+
+![Frontend](assets/frontend.png)
