@@ -94,7 +94,9 @@ export default function ApplicationTable() {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter by job title..."
-          value={(table.getColumn("jobTitle")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("jobTitle")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("jobTitle")?.setFilterValue(event.target.value)
           }
@@ -125,10 +127,7 @@ export default function ApplicationTable() {
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>

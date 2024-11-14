@@ -30,7 +30,9 @@ const ApplicationStatistics = () => {
 
   return (
     <div>
-      <h2>Total Applications: {stats.total}</h2>
+      <h2 className="flex flex-col justify-center items-center">
+        Total Applications: {stats.total}
+      </h2>
       <Pie data={data} />
     </div>
   );
