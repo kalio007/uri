@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -11,45 +13,6 @@ import {
 } from "@/components/ui/table";
 import { fetchAllApplications } from "@/services/job-application";
 import { JobApplication } from "@/types/application";
-
-// Sample job application data
-const jobApplications = [
-  {
-    id: "1",
-    jobTitle: "Frontend Developer",
-    companyName: "TechCorp",
-    status: "Accepted",
-    dateApplied: "2024-10-12",
-  },
-  {
-    id: "2",
-    jobTitle: "Backend Engineer",
-    companyName: "Innovatech",
-    status: "Pending",
-    dateApplied: "2024-11-01",
-  },
-  {
-    id: "3",
-    jobTitle: "Full Stack Developer",
-    companyName: "Soft Solutions",
-    status: "Rejected",
-    dateApplied: "2024-09-18",
-  },
-  {
-    id: "4",
-    jobTitle: "DevOps Engineer",
-    companyName: "Cloudify",
-    status: "Accepted",
-    dateApplied: "2024-10-20",
-  },
-  {
-    id: "5",
-    jobTitle: "Data Scientist",
-    companyName: "DataHub",
-    status: "Pending",
-    dateApplied: "2024-11-10",
-  },
-];
 
 export default function ApplicationTable() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
