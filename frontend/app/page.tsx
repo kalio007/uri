@@ -1,6 +1,5 @@
 import ApplicationTable from "@/components/application-table";
 import ApplicationStatistics from "@/components/ApplicationStatistics";
-import Image from "next/image";
 
 export default function Home() {
   return (
